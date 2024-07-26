@@ -1,11 +1,26 @@
 services:
   web-app:
-    build: .
-#      context: .
+    build:
+      context: .
     ports:
       - 8000:8000
     volumes:
       - ./service:/service
+    environment:
+      - DB_HOST=database
+      - DB_NAME=django_service
+      - DB_USER=service_user
+      - DB_PASS=secret_password
 
     command: >
       sh -c "python manage.py runserver 0.0.0.0:8000"
+    
+    depends_on:
+      - database
+
+  database:
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_DB=django_service
+      - POSTGRES_USER=service_user
+      - POSTGRES_PASSWORD=secret_password
